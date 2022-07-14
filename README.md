@@ -1,6 +1,6 @@
 ## rasa_backend
 
-场景：rasa配置主要以yaml文件为主，在多机部署的时候有点不方便，model支持http存储但是官方没有给出详细的model服务端方法。
+场景：rasa配置主要以yaml文件为主，在多机部署的时候有点不方便，model支持http存储但是官方没有给出详细的model服务端方法。受botfront启发，开发一个简易rasa管理端。
 
 本项目支持：
 1. model的http存储服务端；
