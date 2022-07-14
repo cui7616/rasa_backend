@@ -1,0 +1,19 @@
+recipe: default.v1
+language: zh
+pipeline:
+  - name: JiebaTokenizer
+  - name: CountVectorsFeaturizer
+    OOV_token: oov
+    token_pattern: (?u)\b\w+\b
+  - name: CRFEntityExtractor
+  - name: DIETClassifier
+    entity_recognition: false
+  - name: EntitySynonymMapper
+  - name: FallbackClassifier
+    threshold: 0.7
+policies:
+  - name: MemoizationPolicy
+  - name: TEDPolicy
+    max_history: 5
+    epochs: 100
+  - name: RulePolicy

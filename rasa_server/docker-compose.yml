@@ -1,0 +1,71 @@
+######################################################################################################
+# This file is generated when `botfront up` is invoked.                                              #
+# Changes in .botfront/botfront.yml and .botfront/docker-compose-template.yml will be reflected here #
+######################################################################################################
+
+version: '3.0'
+services:
+  flask:
+    image: rasa/flask:v1
+    container_name: flask
+    networks:
+      - botfront-network
+    restart: always
+    ports:
+      - "8888:5000"
+    volumes:
+      - "./rasafront:/home/f1"
+    command: sanic app.app --host=0.0.0.0 --port=5000 --workers=2 --access-logs
+    env_file:
+      - .env
+
+  rasa:
+    image: rasa/rasa:2.8.29-my
+    build:
+      context: ./build
+    container_name: test-rasa
+    networks:
+      - botfront-network
+    restart: always
+    ports:
+      - '5005:5005'
+    command:
+      - run
+      - '--enable-api'
+      - '-vv'
+    env_file:
+      - .env
+
+  actions:
+    image: rasa/rasa-sdk:2.1.2 
+    container_name: botfront-actions
+    networks:
+      - botfront-network
+    restart: always
+    ports:
+      - '5055:5055'
+    volumes:
+      - './actions:/app/actions'
+    command:
+      - start
+      - '--debug'
+      - '--actions'
+      - actions
+    env_file:
+      - .env
+
+  mongo:
+    image: 'mongo:latest'
+    container_name: botfront-mongo
+    restart: always
+    networks:
+      - botfront-network
+    volumes:
+      - '../botfront-db:/data/db'
+    ports:
+      - '27020:27017'
+
+networks:
+  botfront-network: {}
+volumes:
+  botfront-db: null

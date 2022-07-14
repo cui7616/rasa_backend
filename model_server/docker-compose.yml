@@ -1,0 +1,31 @@
+version: '3.0'
+services:
+  model_server:
+    container_name: model_server
+    image: model/server:v1
+    networks:
+      - nginx-network
+    command: gunicorn --chdir /home/f1 -c /home/f1/gunicorn.conf.py app:app
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/home/f1
+
+  ngnix:     									 #服务名称，名称可自定义
+    container_name: nginx-compose-test 			 #容器名称，可自定义
+    image: nginx    # 镜像名称
+    networks:
+      - nginx-network
+    restart: always
+    ports:
+      - "8888:8888"
+    privileged: true
+    volumes:
+      - /home/ubuntu/model_server/nginx/conf.d:/etc/nginx/conf.d
+      - /home/ubuntu/model_server/nginx/logs:/var/log/nginx
+      - /home/ubuntu/model_server/nginx/html:/usr/share/nginx/html
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /etc/localtime:/etc/localtime
+
+networks:
+  nginx-network: {}
